@@ -11,17 +11,21 @@ import java.util.stream.Collectors;
  * E também responsável por cadastrar e remover os livros do usuário que deseja lê.
  */
 public class ServicoLivrosDoUsuario {
-     private static List<LivroDoUsuario> livroDoUsuarios = new ArrayList<>();
+
+    private static List<LivroDoUsuario> livroDoUsuarios = new ArrayList<>();
 
      public static void cadastrarLivrosDoUsuario(Usuario usuario, List <Livro> livros ) throws Exception {
-        LivroDoUsuario livroDoUsuario = new LivroDoUsuario(usuario);
+         LivroDoUsuario livroDoUsuario = new LivroDoUsuario(usuario);
+
          for (Livro livro: livros) {
              livroDoUsuario.getLivros().add(livro);
          }
+
          livroDoUsuarios.add(livroDoUsuario);
      }
 
      public static Livro removerLivroDoUsuario(Usuario usuario, String titulo ) throws Exception {
+
          LivroDoUsuario livroDoUsuario = null;
          Livro removido = null;
          for (LivroDoUsuario item : livroDoUsuarios) {
@@ -73,35 +77,44 @@ public class ServicoLivrosDoUsuario {
          return listaLivros;
      }
 
-     public static List<Livro> recomendarLivroParaUsuario(Usuario usuario) throws Exception {
+     private static List<Livro> obterLivroDoUsuario(String email) {
          List<Livro> livrosDoUsuario = null;
+
          for (LivroDoUsuario item : livroDoUsuarios) {
-             if (item.getUsuario().getEmail().equalsIgnoreCase(usuario.getEmail())){
+             if (item.getUsuario().getEmail().equalsIgnoreCase(email)){
                  livrosDoUsuario = item.getLivros();
              }
          }
+
+         return livrosDoUsuario;
+     }
+
+     public static List<Livro> recomendarLivroParaUsuario(Usuario usuario) throws Exception {
+         List<Livro> livrosDoUsuario = obterLivroDoUsuario(usuario.getEmail());
+
          List<Livro> backupLivroUsuario = new ArrayList<>();
          backupLivroUsuario.addAll(livrosDoUsuario);
-         List<Livro> livroCategoriaDistintas = livrosDoUsuario
-                 .stream()
-                 .distinct()
-                 .collect(Collectors.toList());
+
+         List<Livro> livroCategoriaDistintas = livrosDoUsuario.stream().distinct().collect(Collectors.toList());
          HashMap<Categoria, Integer> rankingCategoria = gerarListaDeCategoriaARecomendar(livroCategoriaDistintas);
          calcularMaiorCategoria(rankingCategoria, livroCategoriaDistintas, livrosDoUsuario);
+
          livrosDoUsuario.clear();
          livrosDoUsuario.addAll(backupLivroUsuario);
-         return ServicoLivro.pesquisarLivroPorCategoria(categoriaComMaiorRecorrencia(rankingCategoria));
 
+         return ServicoLivro.pesquisarLivroPorCategoria(categoriaComMaiorRecorrencia(rankingCategoria));
      }
      private static Categoria categoriaComMaiorRecorrencia(HashMap<Categoria, Integer> rankingCategoria){
          int maiorNoRanking = 0;
          Categoria aMaiorCategoriaCadastradaPeloUsuario = null;
+
          for (Map.Entry<Categoria, Integer> categoriaARecomendar : rankingCategoria.entrySet()) {
              if (categoriaARecomendar.getValue() > maiorNoRanking) {
                  maiorNoRanking = categoriaARecomendar.getValue();
                  aMaiorCategoriaCadastradaPeloUsuario = categoriaARecomendar.getKey();
              }
          }
+
          return aMaiorCategoriaCadastradaPeloUsuario;
      }
 
@@ -120,18 +133,22 @@ public class ServicoLivrosDoUsuario {
 
      private static HashMap<Categoria, Integer> gerarListaDeCategoriaARecomendar(List <Livro> livros ){
          HashMap<Categoria, Integer> rankingCategoria = new HashMap<>();
+
          for (Livro livro : livros) {
              rankingCategoria.put(livro.getCategoria(), 0);
          }
+
          return rankingCategoria;
      }
 
      public static int numeroDeLivroDoUsuario(Usuario usuario) throws Exception {
+
          for(LivroDoUsuario livroDoUsuario : livroDoUsuarios) {
              if (livroDoUsuario.getUsuario().equals(usuario)) {
                  return livroDoUsuario.getLivros().size();
              }
          }
+
          throw new Exception("Usuário não possui livros cadastrados!");
      }
 }

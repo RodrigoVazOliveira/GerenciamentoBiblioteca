@@ -79,7 +79,7 @@ public class ServicoLivro {
         if (!livrosPorCategoria.isEmpty()) {
             return livrosPorCategoria;
         }
-        
+
         throw new Exception("Nenhumm livro na biblioteca foi localizado com a categoria " + categoria);
     }
 }
