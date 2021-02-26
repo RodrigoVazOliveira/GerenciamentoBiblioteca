@@ -21,16 +21,11 @@ public class ServicoUsuario {
     }
 
     public static Usuario pesquisarUsuarioPorEmail(String email) throws Exception {
-        Usuario usuario = null;
         for (Usuario item : usuarios) {
             if (item.getEmail().equalsIgnoreCase(email)) {
-                usuario = item;
+                return item;
             }
         }
-        if (usuario != null) {
-            return usuario;
-        } else {
-            throw new Exception("Usuário não localizado");
-        }
+        throw new Exception("Usuário não localizado");
     }
 }
