@@ -1,5 +1,7 @@
 package com.br.zup;
 
+import com.br.zup.categoria.*;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,25 +117,20 @@ public class Biblioteca {
     }
 
     private Categoria getCategoriaLivro(String categoria) {
-        if (categoria.equalsIgnoreCase("ROMANCE")) {
-            return Categoria.ROMANCE;
-        } else if (categoria.equalsIgnoreCase("FICCAO_CIENTIFICA")) {
-            return Categoria.FICCAO_CIENTIFICA;
-        } else if (categoria.equalsIgnoreCase("TI")) {
-            return Categoria.TI;
-        } else if (categoria.equalsIgnoreCase("ACAO")) {
-            return Categoria.ACAO;
-        } else if (categoria.equalsIgnoreCase("COMEDIA")) {
-            return Categoria.COMEDIA;
-        } else if (categoria.equalsIgnoreCase("ARTE")) {
-            return Categoria.ARTE;
-        } else if (categoria.equalsIgnoreCase("BIOGRAFIA")) {
-            return Categoria.BIOGRAFIA;
-        } else if (categoria.equalsIgnoreCase("CLASSICO")) {
-            return Categoria.CLASSICO;
-        } else {
-            return Categoria.OUTROS;
-        }
+        ContextoCategoria contextoCategoria = new ContextoCategoria();
+
+        contextoCategoria.setCategorias("romance", new Romance());
+        contextoCategoria.setCategorias("ficção cientifica", new FiccaoCientifica());
+        contextoCategoria.setCategorias("ficção", new FiccaoCientifica());
+        contextoCategoria.setCategorias("ti", new Ti());
+        contextoCategoria.setCategorias("ação", new Acao());
+        contextoCategoria.setCategorias("comédia", new Comedia());
+        contextoCategoria.setCategorias("arte", new Arte());
+        contextoCategoria.setCategorias("Biografia", new Biografia());
+        contextoCategoria.setCategorias("clásssico", new Classico());
+        contextoCategoria.setCategorias("outros", new Outro());
+
+        return contextoCategoria.executar(categoria);
     }
 
     public boolean isExecutar() {
