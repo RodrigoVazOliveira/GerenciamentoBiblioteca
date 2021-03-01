@@ -1,6 +1,8 @@
 package com.br.zup;
 
 import com.br.zup.categoria.*;
+import com.br.zup.config.TelaConfig;
+import com.br.zup.tela.ContextoTela;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,102 +37,16 @@ public class Biblioteca {
         while (executar) {
             menu();
             int option = IO.input().nextInt();
-            if (option == 1) {
-                IO.output("Por favor, forneça as seguintes informações: autor, título, editora, número de exemplares e categoria");
-                Livro livro =  ServicoLivro.cadastrarNovoLivro(
-                        IO.input().nextLine(),
-                        IO.input().nextLine(),
-                        IO.input().nextLine(),
-                        IO.input().nextInt(),
-                        getCategoriaLivro(IO.input().nextLine())
-                );
-               IO.output("Livro foi cadastrado \n" + livro.toString());
-            } else if (option == 2){
-                IO.output(ServicoLivro.ListarTodosOsLivros());
-            } else if (option == 3){
-                IO.output("Favor informar o nome do autor");
-                List<Livro> livrosPorAutor = ServicoLivro.buscarLivroPorAutor(IO.input().nextLine());
-                IO.output(livrosPorAutor.toString());
-            } else if (option == 4){
-                IO.output("Favor informar o nome da editora");
-                List<Livro> livrosPorEditora = ServicoLivro.buscarLivroPorEditora(IO.input().nextLine());
-                IO.output(livrosPorEditora.toString());
-            } else if(option == 0){
+
+            if (option == 0) {
                 executar = false;
-            } else if (option == 5) {
-                IO.output("Por favor, digite um nome e um e-mail: ");
-                Usuario usuario = ServicoUsuario.cadastrarUsuario(
-                        IO.input().nextLine(),
-                        IO.input().nextLine()
-                );
-                IO.output("\u2713 Usuário cadastro!");
-                IO.output(usuario.toString());
-            } else if (option == 6) {
-                IO.output("Por favor, digite o email do usuário: ");
-                Usuario usuario = ServicoUsuario.pesquisarUsuarioPorEmail(IO.input().nextLine());
-                List<Livro> livrosUsuario = new ArrayList<>();
-                adicionarLivroNaListaDoUsuario(livrosUsuario);
-                ServicoLivrosDoUsuario.cadastrarLivrosDoUsuario(usuario, livrosUsuario);
-            } else if (option == 7) {
-                IO.output("Por favor, informar o e-mail do usuário e o título do livro:");
-                Usuario usuario = ServicoUsuario.pesquisarUsuarioPorEmail(IO.input().nextLine());
-                Livro livroRemovido = ServicoLivrosDoUsuario.removerLivroDoUsuario(usuario, IO.input().nextLine());
-                IO.output("Livro removido: ");
-                IO.output(livroRemovido.toStringlivroDoUsuario());
-            } else if (option == 8) {
-                IO.output("Por favor, digite o email do usuário");
-                Usuario usuario = ServicoUsuario.pesquisarUsuarioPorEmail(IO.input().nextLine());
-                String livros = ServicoLivrosDoUsuario.listarLivroDoUsuario(usuario);
-                IO.output(livros);
-            } else if (option == 9) {
-                IO.output("Qual o seu email, por gentileza? ");
-                Usuario usuario = ServicoUsuario.pesquisarUsuarioPorEmail(IO.input().nextLine());
-                List<Livro> livros = ServicoLivrosDoUsuario.recomendarLivroParaUsuario(usuario);
-                for (Livro livro : livros) {
-                    IO.output(livro.toString());
-                }
-            } else if (option == 10) {
-                IO.output("Qual o seu email, por gentileza? ");
-                Usuario usuario = ServicoUsuario.pesquisarUsuarioPorEmail(IO.input().nextLine());
-                IO.output("Total de livros do usuário ");
-                IO.output(usuario.toString());
-                IO.output("Total: " + ServicoLivrosDoUsuario.numeroDeLivroDoUsuario(usuario));
-
+            } else {
+                TelaConfig telaConfig = new TelaConfig();
+                ContextoTela contextoTela = telaConfig.getContextoTela();
+                contextoTela.executar(option);
             }
         }
 
-    }
-
-    private void adicionarLivroNaListaDoUsuario(List<Livro> livrosUsuario) {
-        boolean executarCadastroLivros = true;
-        while(executarCadastroLivros) {
-            IO.output("Por favor, digite o autor, título e categoria do livro");
-            livrosUsuario.add(
-                    new Livro(IO.input().nextLine(), IO.input().nextLine(), getCategoriaLivro(IO.input().nextLine()))
-            );
-            IO.output("Deseja adicionar mais um livro? (Sim/Nao)");
-            String resposta = IO.input().nextLine();
-            if (resposta.equalsIgnoreCase("nao")) {
-                executarCadastroLivros = false;
-            }
-        }
-    }
-
-    private Categoria getCategoriaLivro(String categoria) {
-        ContextoCategoria contextoCategoria = new ContextoCategoria();
-
-        contextoCategoria.setCategorias("romance", new Romance());
-        contextoCategoria.setCategorias("ficção cientifica", new FiccaoCientifica());
-        contextoCategoria.setCategorias("ficção", new FiccaoCientifica());
-        contextoCategoria.setCategorias("ti", new Ti());
-        contextoCategoria.setCategorias("ação", new Acao());
-        contextoCategoria.setCategorias("comédia", new Comedia());
-        contextoCategoria.setCategorias("arte", new Arte());
-        contextoCategoria.setCategorias("Biografia", new Biografia());
-        contextoCategoria.setCategorias("clásssico", new Classico());
-        contextoCategoria.setCategorias("outros", new Outro());
-
-        return contextoCategoria.executar(categoria);
     }
 
     public boolean isExecutar() {
